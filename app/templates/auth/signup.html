@@ -1,0 +1,146 @@
+{% extends 'layouts/authend.html' %}
+
+{% block content %}
+<main>
+  <div class="container">
+
+    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+            <div class="d-flex justify-content-center py-4">
+              <a href="/" class="logo d-flex align-items-center w-auto">
+                <img src="/assets/img/logo.png" alt="">
+                <span class="d-none d-lg-block">{{app_name}}</span>
+              </a>
+            </div><!-- End Logo -->
+
+            <div class="card mb-3">
+
+              <div class="card-body">
+
+                <div class="pt-4 pb-2">
+                  <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
+                  {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    <div class="alert alert-danger">
+                      {% for category, message in messages %}
+                        <div>{{message}}</div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                  {% endwith %}
+
+                  <!-- display form validation errors -->
+                  {% if form.errors %}
+                  <ul>
+                    {% for error in errors %}
+                        <li class="text-danger">{{ error }}</li>
+                    {% endfor %}
+                  </ul>
+                  {% endif %}
+                  
+                  <p class="text-center small">Enter your personal details to create account</p>
+                </div>
+
+                <form method="post" action="{{ url_for('bp_authcontroller.register') }}" class="row g-3 needs-validationx" novalidate>
+                  {{ form.hidden_tag() }}
+                  <div class="col-12">
+                    <label for="lastname" class="form-label">Lastname</label>
+                    <input type="text" name="lastname" class="form-control" id="lastname" required value="{{ request.form.get('lastname', '') }}" />                      
+                    {% for error in form.lastname.errors %}
+                      <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+
+                  <div class="col-12">
+                    <label for="firstname" class="form-label">Firstname</label>
+                    <input type="text" name="firstname" class="form-control" id="firstname" value="{{ request.form.get('firstname', '') }}" />
+                    {% for error in form.firstname.errors %}
+                      <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+
+                  <div class="col-12">
+                    <label for="email_address" class="form-label">Your Email</label>
+                    <input type="email" name="email_address" class="form-control" id="email_address" value="{{ request.form.get('email_address', '') }}" />
+                    {% for error in form.email_address.errors %}
+                      <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                    
+                  </div>
+
+                  <div class="col-12">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-group has-validation">
+                      <span class="input-group-text" id="inputGroupPrepend">@</span>
+                      <input type="text" name="username" class="form-control" id="username" required value="{{ request.form.get('username', '') }}" />
+                      
+                    </div>
+                    {% for error in form.username.errors %}
+                      <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+
+                  <div class="col-12">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="password" required value="{{ request.form.get('password', '') }}">
+                    {% for error in form.password.errors %}
+                      <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-check">
+                      <input class="form-check-input" name="terms" type="checkbox" value="{{ request.form.get('terms', '') }}" id="acceptTerms" required {% if form.terms.data==1 %}checked{% endif %} />
+                      <label class="form-check-label" for="acceptTerms">I agree and accept the <a href="#">terms and conditions</a></label>
+                      <div class="invalid-feedback">You must agree before submitting.</div>
+                      {% for error in form.terms.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-primary w-100" type="submit" name="submit">Create Account</button>
+                  </div>
+                  <div class="col-12">
+                    <p class="small mb-0">Already have an account? <a href="{{ url_for('bp_authcontroller.login') }}">Log in</a></p>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+
+            <div class="credits">
+              <!-- All the links in the footer should remain intact. -->
+              <!-- You can delete the links only if you purchased the pro version. -->
+              <!-- Licensing information: https://bootstrapmade.com/license/ -->
+              <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+              Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+</main><!-- End #main -->
+<script type="text/javascript">
+  var checkbox = document.getElementById("acceptTerms");
+  checkbox.addEventListener("click", function(event) {
+    //alert(checkbox.checked);
+    if (event.target === checkbox) { // Check if clicked element is the checkbox
+      if (checkbox.checked === false) {
+        checkbox.checked = false;
+        checkbox.value = "";
+      } else {
+        checkbox.checked = true;
+        checkbox.value = 1;
+      }
+    }
+  });
+</script>
+{% endblock %}

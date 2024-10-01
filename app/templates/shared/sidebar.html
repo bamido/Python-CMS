@@ -1,0 +1,44 @@
+<aside id="sidebar" class="sidebar">
+  
+  <div>    
+    <small class="text-success">{{current_user.firstname }} {{current_user.lastname }}</small>
+    <div class="" style="font-size:12px; padding-left: 34px; color:green"><i class="bi bi-circle text-success"></i> {{current_user.role.role_name }}</div>    
+  </div>
+  <ul class="sidebar-nav" id="sidebar-nav">
+
+    <li class="nav-item">
+      <a class="nav-link " href="/dashboard">
+        <i class="bi bi-grid"></i>
+        <span>Dashboard</span>
+      </a>
+    </li><!-- End Dashboard Nav -->
+    {% for module_title, module_data in current_user.module_tasks.items() %} 
+    <li class="nav-item">
+      <a class="nav-link collapsed" data-bs-target="#components-nav{{ loop.index }}" data-bs-toggle="collapse" href="#">
+        <i class="{{module_data['module_icon']}}"></i><span>{{module_title}}</span><i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="components-nav{{ loop.index }}" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        {% for task in module_data['tasks'] %}
+        <li>
+          <a href="{{task.task_route}}">
+            <i class="bi bi-circle"></i><span>{{task.task_label}}</span>
+          </a>
+        </li>
+        {% endfor %}       
+      </ul>
+    </li><!-- End Components Nav -->
+    {% endfor %}
+
+  
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/logout">
+        <i class="bi bi-box-arrow-in-right"></i>
+        <span>Logout</span>
+      </a>
+    </li><!-- End Login Page Nav -->
+
+
+  </ul>
+
+</aside>

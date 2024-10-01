@@ -1,0 +1,73 @@
+<aside id="sidebar" class="sidebar">
+  <div>
+    <small class="text-success">{{current_user.firstname }} {{current_user.lastname }}</small>
+  </div>
+  <ul class="sidebar-nav" id="sidebar-nav">
+
+    <li class="nav-item">
+      <a class="nav-link " href="/portal/dashboard">
+        <i class="bi bi-grid"></i>
+        <span>Dashboard</span>
+      </a>
+    </li><!-- End Dashboard Nav -->
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-menu-button-wide"></i><span>Access Control</span><i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="/roles">
+            <i class="bi bi-circle"></i><span>Manage Roles</span>
+          </a>
+        </li>
+        <li>
+          <a href="/modules">
+            <i class="bi bi-circle"></i><span>Manage Modules</span>
+          </a>
+        </li>
+        <li>
+          <a href="/tasks">
+            <i class="bi bi-circle"></i><span>Manage Tasks</span>
+          </a>
+        </li>
+
+      </ul>
+    </li><!-- End Components Nav -->
+
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" data-bs-target="#icons-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-gear"></i><span>Settings</span><i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="/profilephoto">
+            <i class="bi bi-circle"></i><span>Profile Photo</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <i class="bi bi-circle"></i><span>Change Password</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <i class="bi bi-circle"></i><span>Edit Profile Details</span>
+          </a>
+        </li>
+      </ul>
+    </li><!-- End Icons Nav -->
+
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/logout">
+        <i class="bi bi-box-arrow-in-right"></i>
+        <span>Logout</span>
+      </a>
+    </li><!-- End Login Page Nav -->
+
+
+  </ul>
+
+  </aside>

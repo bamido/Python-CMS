@@ -1,0 +1,94 @@
+{% extends 'layouts/portalend.html' %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>{{moduletitle}}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/portal/dashboard">Home</a></li>
+            <li class="breadcrumb-item active">{{title}}</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <h5 class="card-title" style="width:60%; border:0px solid green">List of {{title}}</h5>
+                    <div class="text-end" style="width:30%;  border:0px solid red">
+                        <a href="/addmodule" data-title="Add New Module" data-bs-remote="false" data-bs-toggle="modal" data-bs-target="#largeModal" data-bs-backdrop="static" data-bs-keyboard="false" class="btn btn-primary btn-xs"><i class="fa fa-plus-circle"></i> Add New Module</a>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {% for category, message in messages %}
+                            <div>{{message}}</div>
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+                    {% endwith %}
+                    <!-- Table with stripped rows -->
+                    <table class="table table-striped table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Module ID</th>
+                                <th scope="col">Module Title</th>
+                                <th scope="col">Module Icon</th>
+                                <th scope="col">Module Order</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for module in modules %}                            
+                            <tr>
+                                <th scope="row">{{ loop.index }}</th>
+                                
+                                <td>{{ module.module_id }}</td>
+                                <td>{{ module.module_title }}</td>
+                                <td>{{ module.module_icon }}</td>
+                                <td>{{ module.module_order }}</td>
+                                <td>
+                                    
+                                      <div class="dropdown">
+                                        <a class=" dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-gear "></i>
+                                        </a>
+                                      
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                          <li>                                              
+                                              <a  href="/editmodule/{{module.module_id}}" data-title="Edit Module: {{module.module_title}}" data-bs-remote="false" data-bs-toggle="modal" data-bs-target="#largeModal" class="dropdown-item" data-bs-backdrop="static" data-bs-keyboard="false"><i class="bi bi-pencil-square"></i> Edit </a>
+                                            </li>
+                                            <li class="dropdown-divider"></li>
+                                          <li>                                              
+                                              <a name="deleter" id="deleter" value="{{module.module_id}}"  data-swaltext="You want to delete this {{module.module_title}}  record?" data-swalurl="/deletemodule/{{module.module_id}}"
+                                              data-swalbtnconfirm="Yes, delete it!" 
+                                              data-swalsuccesstitle="Deleted!"
+                                              data-swalsuccess="Module was successfully deleted!" data-swalredirect="/modules" data-swalimage="" class="dropdown-item"><i class="bi bi-trash"></i> Delete</a>
+                                            </li>
+                                          
+                                        </ul>
+                                      </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                      
+                         
+                        </tbody>
+                    </table>
+                    <!-- End Table with stripped rows -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'shared/largemodal.html' %}
+{% endblock %}

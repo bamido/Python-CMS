@@ -1,0 +1,97 @@
+{% extends 'layouts/portalend.html' %}
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>{{moduletitle}}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/portal/dashboard">Home</a></li>
+            <li class="breadcrumb-item active">{{title}}</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <h5 class="card-title" style="width:60%; border:0px solid green">Assign Privileges to:
+                        {{role.role_name}} Role</h5>
+                    <div class="text-end" style="width:30%;  border:0px solid red">
+                        <a href="/roles" class="btn btn-primary btn-xs"><i class="fa fa-plus-circle"></i> View Roles</a>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{assign_url}}">
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {% for category, message in messages %}
+                            <div>{{message}}</div>
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+                    {% endwith %}
+                        <div class="form-group">
+                            <div class="col-md-12 text-end">
+                                <input type="hidden" name="role_id" value="{{id}}" />
+                                <input type="submit" value="Save Changes" class="btn btn-success my-3" />
+                            </div>
+                        </div>
+                        {{ form.hidden_tag() }}
+
+                        <!-- Default Accordion -->
+                        <div class="accordion" id="accordionExample">
+                            {% for module in modules %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne{{loop.index}}">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseOne{{loop.index}}" aria-expanded="true"
+                                        aria-controls="collapseOne{{loop.index}}">
+                                        {{loop.index}}. {{module.module_title}}
+                                    </button>
+                                </h2>
+                                <div id="collapseOne{{loop.index}}" class="accordion-collapse collapse show"
+                                    aria-labelledby="headingOne{{loop.index}}" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="row">
+                                        {% for task in module.tasks %}
+                                        <div class="col-md-4">                                            
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="task_id[]" id="{{task.task_id}}" value="{{task.task_id}}" {% if task.task_id in role_privileges %}checked{% endif %} />
+                                                <label class="form-check-label" for="{{task.task_id}}">
+                                                    {{task.task_label}}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+
+                        </div><!-- End Default Accordion Example -->
+
+                        <div class="form-group">
+                            <div class="col-md-12 text-end">
+                                
+                                <input type="submit" value="Save Changes" class="btn btn-success my-3" />
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

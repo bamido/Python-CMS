@@ -1,0 +1,9 @@
+flask
+python-dotenv
+SQLAlchemy
+Flask-Migrate
+flask-wtf
+flask-login
+uuid
+Pillow
+werkzeug

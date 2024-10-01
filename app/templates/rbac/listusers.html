@@ -1,0 +1,51 @@
+{% extends 'layouts/portalend.html' %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>{{title}}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">{{title}}</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+
+                    <!-- Table with stripped rows -->
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">User</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for user in users %}                            
+                            <tr>
+                                <th scope="row">{{ loop.index }}</th>
+                                
+                                <td>{{ user }}</td>
+                                <td></td>
+                            </tr>
+                            {% endfor %}
+                      
+                         
+                        </tbody>
+                    </table>
+                    <!-- End Table with stripped rows -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,153 @@
+<!-- page content -->
+
+<div class="" id="form_container">
+           
+    <div id="myresponse"></div>
+
+ <form id="theform" action="" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+ <div class="card-body">
+
+    <div class="row mb-3">
+        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="task_icon">Dashboard<span class="required"></span>
+        </label>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <select  id="isdashboard" name="isdashboard" required="required" class="form-select col-md-7 col-xs-12">
+                <option value="0" {% if task.isdashboard == False: %}selected{% endif %}>0</option>
+                <option value="1" {% if task.isdashboard == True: %}selected{% endif %}>1</option>
+            </select>
+        </div>
+    </div> 
+
+   <div class="row mb-3">
+     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="module_id">Module <span class="required">*</span>
+     </label>
+     <div class="col-md-6 col-sm-6 col-xs-12">
+       <select  id="module_id" name="module_id" required="required" class="form-select col-md-7 col-xs-12">
+        <option value="">Choose Module</option>
+        {% for module in modules %}
+            <option value="{{module.module_id}}" {% if task.module_id == module.module_id: %}selected{% endif %}>{{module.module_title}}</option>
+        {% endfor %}
+    </select>
+     </div>
+   </div>   
+
+    <div class="row mb-3">
+     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="task_label">Task Label <span class="required">*</span>
+     </label>
+     <div class="col-md-6 col-sm-6 col-xs-12">
+       <input type="text" id="task_label" name="task_label" required="required" placeholder="view roles" class="form-control col-md-7 col-xs-12" value="{{ task.task_label }}">
+     </div>
+   </div>   
+
+   <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="task_url">Task URL <span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <input type="text" id="task_url" name="task_url" required="required" placeholder="bp_role.roles" class="form-control col-md-7 col-xs-12" value="{{ task.task_url }}">
+    </div>
+  </div>   
+
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="task_route">Task Route <span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <input type="text" id="task_route" name="task_route" required="required" placeholder="/roles" class="form-control col-md-7 col-xs-12" value="{{ task.task_route }}">
+    </div>
+  </div>   
+
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="task_method">Task Method <span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <input type="text" id="task_method" name="task_method" required="required" placeholder="GET, POST, DELETE" class="form-control col-md-7 col-xs-12" value="{{ task.task_method }}">
+    </div>
+  </div>   
+
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="task_icon">Task Icon <span class="required"></span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <input type="text" id="task_icon" name="task_icon"  placeholder="fa fa-icon" class="form-control col-md-7 col-xs-12" value="{{ task.task_icon }}">
+    </div>
+  </div> 
+  
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="task_icon">Nav Bar <span class="required"></span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <select  id="isnavbar" name="isnavbar" required="required" class="form-select col-md-7 col-xs-12">
+            <option value="0" {% if task.isnavbar == False: %}selected{% endif %}>0</option>
+            <option value="1" {% if task.isnavbar == True: %}selected{% endif %}>1</option>
+          </select>
+    </div>
+  </div>   
+                    
+ </div>           
+         
+   <div class="ln_solid"></div>
+   <div class="border-top my-3"></div>
+   <div class="row mb-3">
+     <div class="col-md-12 text-end">              
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>              
+             <button class="btn btn-primary" type="reset">Reset</button>
+       <button type="submit" class="btn btn-success">Save Changes</button>
+     </div>
+   </div>
+
+ </form>
+</div>
+
+
+<!-- jQuery -->
+
+<script type="text/javascript">
+$('#loadinggif').hide(); // hide the loading gif   
+
+//$('input#savesermonseries').click(function() {
+$('#theform').submit(function(e) {
+e.preventDefault();
+var baseurl = "{{base_url}}";
+//var userfile = $('input[type=file]').val(); //document.getElementById("userfile"); //$('#userfile').val();   
+var formData = new FormData($(this)[0]); 
+
+//alert(formData);
+
+$('#loadinggif').show();  // show the loading gif.
+
+//alert(refname);
+     $.ajax({
+         type: "POST",
+         url:  "/edittask/{{task.task_id}}",
+         data: formData, 
+         processData: false,
+         contentType: false,
+         success: function (response){ 
+         
+
+         if(response != null && response.success===true){
+           
+         window.location = baseurl + "tasks";      
+         }else{
+           console.log(response);
+           //var theresponse = JSON.parse(response);
+           var errorString = " <div class='alert alert-danger alert-dismissible fade show' role='alert'>";
+               errorString += "<ul class='verror'>";               
+               errorString += "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
+           $.each( response.errors, function( key, value) {
+               
+               errorString += "<li>" + value + "</li>";
+           });
+           errorString += "</ul></div>";
+            $('#myresponse').html(errorString); 
+            //$('#form_container').html(response); 
+         }
+                  
+         },
+         error: function(Error){alert('Error: something went wrong!');}
+
+     });
+     return false;
+ });
+
+</script>
