@@ -35,3 +35,12 @@ class SectiondocModel(db.Model):
 
     def __repr__(self):
         return '<SectiondocModel {}>'.format(self.sectiondoc_id)
+
+
+class SectionDocForm(FlaskForm):    
+    section_id = StringField('section id', validators=[DataRequired(message="section id field is required!")])
+    description = StringField('description')    
+    docurl = StringField('docurl')
+    doctype = StringField('doctype', validators=[DataRequired(message="doctype field is required!")])    
+    sortorder = StringField('sort order', validators=[DataRequired(message="sort order field is required!")])    
+    submit = SubmitField('Submit') 

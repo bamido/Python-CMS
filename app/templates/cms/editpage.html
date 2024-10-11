@@ -1,0 +1,140 @@
+<!-- page content -->
+
+<div class="" id="form_container">
+           
+    <div id="myresponse"></div>
+
+ <form id="theform" action="" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+ <div class="card-body">
+
+ 
+
+   <div class="row mb-3">
+     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="parent_id">Parent Page <span class="required">*</span>
+     </label>
+     <div class="col-md-6 col-sm-6 col-xs-12">
+       <select  id="parent_id" name="parent_id" required="required" class="form-select col-md-7 col-xs-12">
+        <option value="">Choose Page</option>
+        <option value="0" {% if 0 == page.parent_id: %}selected{% endif %}>No Parent</option>
+        {% for mypage in pages %}
+            <option value="{{mypage.page_id}}" {% if page.parent_id == mypage.page_id: %}selected{% endif %}>{{mypage.pagetitle}}</option>
+        {% endfor %}
+    </select>
+     </div>
+   </div>   
+
+   <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="pagetitle">Page Name <span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <input type="text" id="pagetitle" name="pagetitle" required="required" placeholder="About Us" class="form-control col-md-7 col-xs-12" value="{{ page.pagetitle }}">
+    </div>
+  </div>   
+
+  <div class="row mb-3">
+   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="metakeyword">Meta Keywords <span class="required"></span>
+   </label>
+   <div class="col-md-6 col-sm-6 col-xs-12">
+     <input type="text" id="metakeyword" name="metakeyword" placeholder="strideshub, academy, online training" class="form-control col-md-7 col-xs-12" value="{{ page.metakeyword }}">
+   </div>
+ </div>   
+
+ <div class="row mb-3">
+   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="metadesc">Meta Desc <span class="required"></span>
+   </label>
+   <div class="col-md-6 col-sm-6 col-xs-12">
+     <input type="text" id="metadesc" name="metadesc"  placeholder="StidesHub is a software company..." class="form-control col-md-7 col-xs-12" value="{{ page.metadesc }}">
+   </div>
+ </div>   
+
+ <div class="row mb-3">
+   <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sortorder">Sort Order <span class="required">*</span>
+   </label>
+   <div class="col-md-6 col-sm-6 col-xs-12">
+     <input type="number" id="sortorder" name="sortorder" min="1" value="{{ page.sortorder }}" required="required"  class="form-control col-md-7 col-xs-12">
+   </div>
+ </div>  
+  
+  
+  
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="pagestatus">Page Status <span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <select  id="pagestatus" name="pagestatus" required="required" class="form-select col-md-7 col-xs-12">
+            <option value="PUBLISHED" {% if page.pagestatus.value == 'Published': %}selected{% endif %}>Published</option>
+            <option value="PENDING" {% if page.pagestatus.value == 'Pending': %}selected{% endif %}>Pending</option>
+            <option value="DELETED" {% if page.pagestatus.value == 'Deleted': %}selected{% endif %}>Deleted</option>
+          </select>
+    </div>
+  </div> 
+                    
+ </div>           
+         
+   <div class="ln_solid"></div>
+   <div class="border-top my-3"></div>
+   <div class="row mb-3">
+     <div class="col-md-12 text-end">              
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>              
+             <button class="btn btn-primary" type="reset">Reset</button>
+       <button type="submit" class="btn btn-success">Save Changes</button>
+     </div>
+   </div>
+
+ </form>
+</div>
+
+
+<!-- jQuery -->
+
+<script type="text/javascript">
+$('#loadinggif').hide(); // hide the loading gif   
+
+//$('input#savesermonseries').click(function() {
+$('#theform').submit(function(e) {
+e.preventDefault();
+var baseurl = "{{base_url}}";
+//var userfile = $('input[type=file]').val(); //document.getElementById("userfile"); //$('#userfile').val();   
+var formData = new FormData($(this)[0]); 
+
+//alert(formData);
+
+$('#loadinggif').show();  // show the loading gif.
+
+//alert(refname);
+     $.ajax({
+         type: "POST",
+         url:  "/editpage/{{page.page_id}}",
+         data: formData, 
+         processData: false,
+         contentType: false,
+         success: function (response){ 
+         
+
+         if(response != null && response.success===true){
+           
+         window.location = baseurl + "pages";      
+         }else{
+           console.log(response);
+           //var theresponse = JSON.parse(response);
+           var errorString = " <div class='alert alert-danger alert-dismissible fade show' role='alert'>";
+               errorString += "<ul class='verror'>";               
+               errorString += "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
+           $.each( response.errors, function( key, value) {
+               
+               errorString += "<li>" + value + "</li>";
+           });
+           errorString += "</ul></div>";
+            $('#myresponse').html(errorString); 
+            //$('#form_container').html(response); 
+         }
+                  
+         },
+         error: function(Error){alert('Error: something went wrong!');}
+
+     });
+     return false;
+ });
+
+</script>

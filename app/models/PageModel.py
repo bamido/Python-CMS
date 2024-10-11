@@ -1,9 +1,10 @@
 from app.models.mydb  import db
-from sqlalchemy import Enum
+from sqlalchemy import Enum, func
 from enum import Enum as PyEnum  # Import Enum from Python's enum module
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, ValidationError
+from app.models.SectionModel import SectionModel
 
 # Define the enum class for PageStatus
 class PageStatus(PyEnum):
@@ -33,3 +34,86 @@ class PageModel(db.Model):
     def __repr__(self):
         return '<PageModel {}>'.format(self.pagetitle)
 
+    @staticmethod
+    def get_all_pages():
+        #retrieve all pages
+        pages = PageModel.query.all()
+        return pages
+
+    def get_pages_with_section_count():
+    # Perform a LEFT JOIN between Pages and Sections and count the sections
+        result = db.session.query(
+            PageModel, 
+            func.count(SectionModel.section_id).label('section_count')  # Count the number of sections
+        ).outerjoin(SectionModel, PageModel.page_id == SectionModel.page_id) \
+        .group_by(PageModel.page_id).all()
+        return result
+
+    def get_all_sections():
+        # get all sections by join pages and sections
+        result = []
+        sections = db.session.query(
+            PageModel,
+            SectionModel
+        ).outerjoin(PageModel, SectionModel.page_id == PageModel.page_id) \
+        .all()
+
+        from app.models.SectiondocModel import SectiondocModel
+        for page, section in sections:
+            image = db.session.query(SectiondocModel.docurl) \
+                .filter(SectiondocModel.section_id == section.section_id) \
+                .filter(SectiondocModel.doctype == 'IMAGE') \
+                .first()  # Fetch only the first image
+            
+          
+            result.append({
+                'page': page,
+                'section': section,
+                'docurl': image.docurl if image else None
+            })
+
+        return result
+
+    def get_page_sections(id):
+        #retrieve specific page sections
+        #sections = SectionModel.query.filter_by(page_id=id)
+        #return sections
+
+        result = []
+        sections = SectionModel.query.filter_by(page_id=id)
+        
+        from app.models.SectiondocModel import SectiondocModel
+        for section in sections:
+            image = db.session.query(SectiondocModel.docurl) \
+                .filter(SectiondocModel.section_id == section.section_id) \
+                .filter(SectiondocModel.doctype == 'IMAGE') \
+                .first()  # Fetch only the first image
+
+            result.append({                
+                'section': section,
+                'docurl': image.docurl if image else None
+            })
+
+        return result
+
+
+
+
+class PageForm(FlaskForm):    
+    pagetitle = StringField('page title', validators=[DataRequired(message="page title field is required!")])
+    parent_id = StringField('parent id', validators=[DataRequired(message="parent id field is required!")])
+    metakeyword = StringField('meta keyword')    
+    metadesc = StringField('meta description')
+    pagestatus = StringField('page status', validators=[DataRequired(message="page status field is required!")])    
+    sortorder = StringField('sort order', validators=[DataRequired(message="sort order field is required!")])    
+    submit = SubmitField('Submit')  
+
+    def __init__(self, original_title, *args, **kwargs):
+        super(PageForm, self).__init__(*args, **kwargs)
+        self.original_title = original_title
+
+    def validate_pagetitle(self, pagetitle):
+        if pagetitle.data != self.original_title:
+            page = PageModel.query.filter_by(pagetitle=pagetitle.data).first()
+            if page:
+                raise ValidationError('page title already exists.')     

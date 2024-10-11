@@ -1,0 +1,33 @@
+{% for item in sectiondocs %}
+<tr id="deletercontainer{{item.sectiondoc_id}}">
+    <td scope="row">{{ loop.index }}</td>
+    
+    <td>                    
+        {% if item.doctype.value=='image': %}
+            <img src="/static/assets/uploads/{{item.docurl}}" alt="" class="img-fluid" style="width:75px" />
+        {% else:%}
+            {{item.docurl}}
+        {% endif %}
+    </td>
+   
+    <td>
+        {{item.doctype.value}}
+    </td>
+    <td>{{ item.sortorder }}</td>
+    <td>
+        <span class="badge rounded-pill  
+            {% if item.sectiondocstatus.value == 'Pending' %} 
+                bg-warning 
+            {% elif item.sectiondocstatus.value == 'Deleted' %} 
+                bg-danger 
+            {% else %} 
+                bg-success 
+            {% endif %}">
+            {{ item.sectiondocstatus.value }}
+        </span>
+    </td>
+    <td>
+        <button type="button" class="btn btn-danger" id="ajaxdeleter{{item.sectiondoc_id}}" data-id="{{item.sectiondoc_id}}"><i class="bi bi-thrash">Delete</i></button>
+    </td>
+</tr>
+{% endfor %}

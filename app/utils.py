@@ -1,4 +1,9 @@
+import os
+import uuid
 from flask import session
+from werkzeug.utils import secure_filename
+from PIL import Image
+from app.config import Config
 
 def load_user_from_session(environ):
   # Extract user ID from session (replace with your logic)
@@ -28,3 +33,22 @@ def unprotected_route(view_func):
         return view_func(*args, **kwargs)
     wrapped_view._unprotected_route = True
     return wrapped_view  
+
+    # Helper function to check allowed file types
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_IMG_EXTENSIONS
+
+# Resize image function
+def resize_image(image_path, output_path, base_width):
+    img = Image.open(image_path)
+    w_percent = (base_width / float(img.size[0]))
+    h_size = int((float(img.size[1]) * float(w_percent)))
+    img = img.resize((base_width, h_size), Image.Resampling.LANCZOS)
+    img.save(output_path)
+
+# Create a thumbnail function
+def create_thumbnail(image_path, thumbnail_path, thumb_size=(150, 150)):
+    img = Image.open(image_path)
+    img.thumbnail(thumb_size)
+    img.save(thumbnail_path)
+    

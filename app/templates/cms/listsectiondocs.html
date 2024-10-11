@@ -1,0 +1,241 @@
+<!-- page content -->
+
+<div class="" id="form_container">
+           
+    
+
+ <form id="theform" action="" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+ <div class="card-body">
+    <table class="table table-striped table-hover table-bordered datatable">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Section Doc</th>
+                <th scope="col">Doc Type</th>
+                <th scope="col">Sort Order</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody id="docsreponse">
+
+            {% for item in sectiondocs %}
+            <tr id="deletercontainer{{item.sectiondoc_id}}">
+                <td scope="row">{{ loop.index }}</td>
+                
+                <td>                    
+                    {% if item.doctype.value=='image': %}
+                        <img src="/static/assets/uploads/{{item.docurl}}" alt="" class="img-fluid" style="width:75px" />
+                    {% else:%}
+                        {{item.docurl}}
+                    {% endif %}
+                </td>
+               
+                <td>
+                    {{item.doctype.value}}
+                </td>
+                <td>{{ item.sortorder }}</td>
+                <td>
+                    <span class="badge rounded-pill  
+                        {% if item.sectiondocstatus.value == 'Pending' %} 
+                            bg-warning 
+                        {% elif item.sectiondocstatus.value == 'Deleted' %} 
+                            bg-danger 
+                        {% else %} 
+                            bg-success 
+                        {% endif %}">
+                        {{ item.sectiondocstatus.value }}
+                    </span>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" id="ajaxdeleter{{item.sectiondoc_id}}" data-id="{{item.sectiondoc_id}}"><i class="bi bi-thrash">Delete</i></button>
+                </td>
+            </tr>
+            {% endfor %}
+
+
+        </tbody>
+    </table>
+    <div id="myresponse"></div>
+    <h4 class="mt-5" style="border-bottom: 1px solid #ddd;">Add New Documents To: <b>{{section.sectiontitle}}</b></h4>
+       
+      
+    <div class="row mb-3">
+        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="doctype">Doc Type <span class="required">*</span>
+        </label>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <select  id="doctype" name="doctype" required="required" class="form-select col-md-7 col-xs-12">
+                <option value="IMAGE" >IMAGE</option>
+                <option value="VIDEO" >VIDEO</option>
+                <option value="AUDIO" >AUDIO</option>
+                <option value="PDF">PDF</option>
+              </select>
+        </div>
+      </div> 
+    
+    
+      <div class="row mb-3">
+        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="docurl">Paste or Upload File <span class="required"></span>
+        </label>
+        <div class="col-md-9 col-sm-6 col-xs-12">
+          <input type="file" id="docurl" name="docurl"  placeholder="" class="form-control col-md-7 col-xs-12" value="">
+          <p class="help" id="help1"></p>
+        </div>
+      </div> 
+
+      <div class="row mb-3">
+        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="description">description <span class="required"></span>
+        </label>
+        <div class="col-md-9 col-sm-6 col-xs-12">
+          <input type="text" id="description" name="description"  placeholder="" class="form-control col-md-7 col-xs-12" value="">
+        </div>
+      </div> 
+    
+      <div class="row mb-3">
+        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sortorder">Sort Order <span class="required">*</span>
+        </label>
+        <div class="col-md-9 col-sm-6 col-xs-12">
+          <input type="number" id="sortorder" name="sortorder" min="1" value="{{docnumber}}" required="required"  class="form-control col-md-7 col-xs-12">
+        </div>
+      </div>  
+  
+  
+  
+  
+                    
+ </div>           
+         
+   <div class="ln_solid"></div>
+   <div class="border-top my-3"></div>
+   <div class="row mb-3">
+     <div class="col-md-12 text-end">   
+        <input type="hidden" name="section_id" id="section_id" value="{{sectionid}}">           
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>              
+             <button class="btn btn-primary" type="reset">Reset</button>
+       <button type="submit" class="btn btn-success">Save Changes</button>
+     </div>
+   </div>
+
+ </form>
+</div>
+
+
+<!-- jQuery -->
+
+<script type="text/javascript">
+$('#loadinggif').hide(); // hide the loading gif   
+
+//$('input#savesermonseries').click(function() {
+$('#theform').submit(function(e) {
+e.preventDefault();
+var baseurl = "{{base_url}}";
+//var userfile = $('input[type=file]').val(); //document.getElementById("userfile"); //$('#userfile').val();   
+var formData = new FormData($(this)[0]); 
+
+//console.log(formData);
+
+$('#loadinggif').show();  // show the loading gif.
+
+//alert(refname);
+     $.ajax({
+         type: "POST",
+         url:  "/addsectiondoc/{{sectionid}}",
+         data: formData, 
+         processData: false,
+         contentType: false,
+         success: function (response){ 
+            
+            //console.log(response);
+         if(response != null && response.errors==null){
+            $("#theform").trigger("reset");
+            $('#docsreponse').html(response);      
+         }else{
+           //console.log(response);
+           //var theresponse = JSON.parse(response);
+           var errorString = " <div class='alert alert-danger alert-dismissible fade show' role='alert'>";
+               errorString += "<ul class='verror'>";               
+               errorString += "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
+           $.each( response.errors, function( key, value) {
+               
+               errorString += "<li>" + value + "</li>";
+           });
+           errorString += "</ul></div>";
+            $('#myresponse').html(errorString); 
+            //$('#form_container').html(response); 
+         }
+                  
+         },
+         error: function(Error){alert('Error: something went wrong!');}
+
+     });
+     return false;
+ });
+
+ $(document).ready(function(){
+    // when the doctype is changed
+    $('#doctype').change(function(){
+        var doctype = $(this).val();
+        //alert(doctype);
+        if(doctype=='AUDIO' || doctype=='VIDEO'){
+            $('#docurl').prop('type','text');
+            $('#help1').html('Paste your url in the box above e.g youtube url');
+            //$('#docurl').prop('name','docurl');
+        }else{
+            $('#docurl').prop('type','file');
+            $('#help1').html('Select file to upload');
+            //$('#docurl').prop('name','docfile');
+        }
+
+    });
+
+    // delete document
+    $('[id^=ajaxdeleter]').click(function(){
+        var sectiondocid = $(this).data('id');
+        //alert(sectiondocid);
+        var delconfirm = confirm("Are you sure you want to Delete this record?");
+        if(delconfirm==true){
+
+            var token = $('meta[name="csrf-token"]').attr('content');
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+            type: "DELETE",
+            url:  "/deletesectiondoc/"+sectiondocid,
+            data: "id=" + sectiondocid + "&_token=" + token,
+            processData: false,
+            contentType: false,
+            success: function (response){ 
+            
+            if(response != null && response.success===true){
+            $('#deletercontainer'+sectiondocid).remove();      
+            }else{
+            //console.log(response);
+            //var theresponse = JSON.parse(response);
+            var errorString = " <div class='alert alert-danger alert-dismissible fade show' role='alert'>";
+                errorString += "<ul class='verror'>";               
+                errorString += "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
+            $.each( response.errors, function( key, value) {
+                
+                errorString += "<li>" + value + "</li>";
+            });
+            errorString += "</ul></div>";
+                $('#myresponse').html(errorString); 
+                //$('#form_container').html(response); 
+            }
+                    
+            },
+            error: function(Error){alert('Error: something went wrong!');}
+
+        });
+    }else{
+        return false;
+    }
+    });
+ });
+
+</script>

@@ -1,0 +1,152 @@
+{% extends 'layouts/portalend.html' %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>{{moduletitle}}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+            <li class="breadcrumb-item active">{{title}}</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {% for category, message in messages %}
+    <div>{{message}}</div>
+    {% endfor %}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endwith %}
+<section class="section">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <h5 class="card-title" style="width:60%; border:0px solid green">List of {{title}}</h5>
+                    <div class="text-end" style="width:30%;  border:0px solid red">
+                        <a href="/pages" class="btn btn-primary btn-xs"><i class="fa fa-plus-circle"></i> View Pages</a>
+                    </div>
+                </div>
+                <div class="card-body table-responsive">
+                    <h5 class="card-title"></h5>
+
+                    <!-- Table with stripped rows -->
+                    <table class="table table-striped table-hover table-bordered datatable">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Page Name</th>
+                                <th scope="col">Section Title</th>
+                                <th scope="col">Section Body</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Sort Order</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for item in allsections %}
+                            <tr>
+                                <td scope="row">{{ loop.index }}</td>
+                                <td>{{ item.page.pagetitle }}</td>
+                                <td>
+                                    <div style="word-wrap: break-word; width:200px; white-space:normal;">
+                                        {{ item.section.sectiontitle }}
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <div style="word-wrap: break-word; width:220px; white-space:normal;">
+                                        {{ item.section.sectionbody | decode_and_safe | excerpt(80) }}
+                                    </div>
+
+                                </td>
+                                <td>
+                                    {% if item.docurl: %}
+                                    <img src="/static/assets/uploads/{{item.docurl}}" alt="section image" style="width:45px">
+                                    {% else %}
+                                    <img src="/static/assets/images/no-photo.png" alt="section image" style="width:45px">
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.section.sortorder }}</td>
+                                <td>
+                                    <span class="badge rounded-pill  
+                                        {% if item.section.sectionstatus.value == 'Pending' %} 
+                                            bg-warning 
+                                        {% elif item.section.sectionstatus.value == 'Deleted' %} 
+                                            bg-danger 
+                                        {% else %} 
+                                            bg-success 
+                                        {% endif %}">
+                                        {{ item.section.sectionstatus.value }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <a class=" dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-gear "></i>
+                                        </a>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+                                            <li>
+                                                <a href="/editsection/{{item.section.section_id}}"
+                                                    data-title="Edit Section: {{item.section.sectiontitle}}" data-bs-remote="false"
+                                                    data-bs-toggle="modal" data-bs-target="#largeModal"
+                                                    class="dropdown-item" data-bs-backdrop="static"
+                                                    data-bs-keyboard="false"><i class="bi bi-pencil-square"></i> Edit
+                                                </a>
+                                            </li>
+                                            <li class="dropdown-divider"></li>
+                                            <li style="cursor: pointer;">
+                                                <a name="deleter" id="deleter" value="{{item.section.section_id}}"
+                                                    data-swaltext="You want to delete this {{item.section.sectiontitle}}  record?"
+                                                    data-swalurl="/deletesection/{{item.section.section_id}}"
+                                                    data-swalbtnconfirm="Yes, delete it!"
+                                                    data-swalsuccesstitle="Deleted!"
+                                                    data-swalsuccess="Section was successfully deleted!"
+                                                    data-swalredirect="/sections" data-swalimage=""
+                                                    class="dropdown-item"><i class="bi bi-trash"></i> Delete </a>
+                                            </li>
+                                            <li class="dropdown-divider"></li>
+                                            <li>
+                                                <a href="/addsection/{{item.page.page_id}}"
+                                                    data-title="Add Section To: {{item.page.pagetitle}}" data-bs-remote="false"
+                                                    data-bs-toggle="modal" data-bs-target="#largeModal"
+                                                    class="dropdown-item" data-bs-backdrop="static"
+                                                    data-bs-keyboard="false"><i class="bi bi-plus-circle"></i> Add
+                                                    Section</a>
+                                            </li>
+                                            <li class="dropdown-divider"></li>
+                                            <li>
+                                                <a href="/sectiondocs/{{item.section.section_id}}"
+                                                    data-title="Section Documents for: {{item.section.sectiontitle}}" data-bs-remote="false"
+                                                    data-bs-toggle="modal" data-bs-target="#largeModal"
+                                                    class="dropdown-item" data-bs-backdrop="static"
+                                                    data-bs-keyboard="false"><i class="bi bi-list"></i> View Docs </a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                    <!-- End Table with stripped rows -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'shared/largemodal.html' %}
+{% endblock %}
