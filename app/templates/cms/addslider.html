@@ -1,0 +1,176 @@
+<!-- page content -->
+
+<div class="" id="form_container">
+           
+    <div id="myresponse"></div>
+
+ <form id="theform" action="" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+ <div class="card-body">
+
+   <div class="row mb-3">
+     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="page_id">Page <span class="required">*</span>
+     </label>
+     <div class="col-md-9 col-sm-6 col-xs-12">
+       <select  id="page_id" name="page_id" required="required" class="form-select col-md-7 col-xs-12">
+        <option value="">Choose Page</option>
+        {% for page in pages %}
+        <option value="{{page.page_id}}" {% if page.page_id == id: %} selected {% endif %}>{{page.pagetitle}}</option>
+        {% endfor %}
+        
+    </select>
+     </div>
+   </div>   
+
+    <div class="row mb-3">
+     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="title">Slide Title <span class="required">*</span>
+     </label>
+     <div class="col-md-9 col-sm-6 col-xs-12">
+       <input type="text" id="title" name="title" required="required" placeholder="" class="form-control col-md-7 col-xs-12">
+     </div>
+   </div>   
+
+   <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="subtitle">Sub Title<span class="required"></span>
+    </label>
+    <div class="col-md-9 col-sm-6 col-xs-12">
+      <input type="text" id="subtitle" name="subtitle" placeholder="" class="form-control col-md-7 col-xs-12">
+    </div>
+  </div>   
+
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="body">Slide Body <span class="required"></span>
+    </label>
+    <div class="col-md-9 col-sm-6 col-xs-12">
+      <textarea id="body" name="body"  placeholder="" class="form-control col-md-7 col-xs-12"></textarea>
+    </div>
+  </div> 
+    
+
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="imageurl">Slide Image  <span class="required">*</span>
+    </label>
+    <div class="col-md-9 col-sm-6 col-xs-12">
+      <input type="file" id="imageurl" name="imageurl" required  placeholder="" class="form-control col-md-7 col-xs-12" accept=".png, .jpg, .jpeg">
+    </div>
+  </div> 
+
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="link1">Link 1 <span class="required"></span>
+    </label>
+    <div class="col-md-9 col-sm-6 col-xs-12">
+      <input type="text" id="link1" name="link1"  placeholder="" class="form-control col-md-7 col-xs-12">
+    </div>
+  </div> 
+
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="link2">Link 2 <span class="required"></span>
+    </label>
+    <div class="col-md-9 col-sm-6 col-xs-12">
+      <input type="text" id="link2" name="link2"  placeholder="" class="form-control col-md-7 col-xs-12">
+    </div>
+  </div> 
+
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="align">Text Alignment <span class="required">*</span>
+    </label>
+    <div class="col-md-9 col-sm-6 col-xs-12">
+        <select  id="align" name="align" required="required" class="form-select col-md-7 col-xs-12">
+            <option value="Left">Left</option>
+            <option value="Center">Center</option>
+            <option value="Right">Right</option>
+          </select>
+    </div>
+  </div> 
+
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sortorder">Sort Order <span class="required">*</span>
+    </label>
+    <div class="col-md-9 col-sm-6 col-xs-12">
+      <input type="number" id="sortorder" name="sortorder" min="1" value="1" required="required"  class="form-control col-md-7 col-xs-12">
+    </div>
+  </div>   
+
+
+  
+  <div class="row mb-3">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sliderstatus">Slide Status <span class="required">*</span>
+    </label>
+    <div class="col-md-9 col-sm-6 col-xs-12">
+        <select  id="sliderstatus" name="sliderstatus" required="required" class="form-select col-md-7 col-xs-12">
+            <option value="Published">Publish</option>
+            <option value="Pending">Pending</option>
+          </select>
+    </div>
+  </div> 
+
+                       
+ </div>           
+         
+   <div class="ln_solid"></div>
+   <div class="border-top my-3"></div>
+   <div class="row mb-3">
+     <div class="col-md-12 text-end">    
+        <div id="myresponse"></div>          
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>              
+             <button class="btn btn-primary" type="reset">Reset</button>
+       <button type="submit" class="btn btn-success">Submit</button>
+     </div>
+   </div>
+
+ </form>
+</div>
+
+
+
+
+<!-- jQuery -->
+
+<script type="text/javascript">
+$('#loadinggif').hide(); // hide the loading gif   
+
+$('#theform').submit(function(e) {
+e.preventDefault();
+var baseurl = "{{base_url}}";
+var formData = new FormData($(this)[0]); 
+
+//alert(formData);
+
+$('#loadinggif').show();  // show the loading gif.
+
+//alert(refname);
+     $.ajax({
+         type: "POST",
+         url:  "/addslider",
+         data: formData, 
+         processData: false,
+         contentType: false,
+         success: function (response){ 
+         
+
+         if(response != null && response.success===true){
+           
+         window.location = baseurl + "sliders";      
+         }else{
+           console.log(response);
+           //var theresponse = JSON.parse(response);
+           var errorString = " <div class='alert alert-danger alert-dismissible fade show' role='alert'>";
+               errorString += "<ul class='verror'>";               
+               errorString += "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
+           $.each( response.errors, function( key, value) {
+               
+               errorString += "<li>" + value + "</li>";
+           });
+           errorString += "</ul></div>";
+            $('#myresponse').html(errorString); 
+            //$('#form_container').html(response); 
+         }
+                  
+         },
+         error: function(Error){alert('Error: something went wrong!');}
+
+     });
+     return false;
+ });
+
+</script>
