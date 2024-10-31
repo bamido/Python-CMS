@@ -12,6 +12,9 @@ from app.controllers.TaskController import bp_task
 from app.controllers.PageController import bp_page
 from app.controllers.SectionController import bp_section
 from app.controllers.SliderController import bp_slider
+from app.controllers.ThreadController import bp_thread
+from app.controllers.PostController import bp_post
+
 
 
 # Define your routes and map them to controllers
@@ -26,4 +29,7 @@ def create_routes(app):
     app.register_blueprint(bp_page)
     app.register_blueprint(bp_section)
     app.register_blueprint(bp_slider)
+    app.register_blueprint(bp_thread)
+    app.register_blueprint(bp_post)
+
 

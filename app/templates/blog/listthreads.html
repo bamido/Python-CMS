@@ -1,0 +1,132 @@
+{% extends 'layouts/portalend.html' %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>{{moduletitle}}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+            <li class="breadcrumb-item active">{{title}}</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {% for category, message in messages %}
+    <div>{{message}}</div>
+    {% endfor %}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endwith %}
+<section class="section">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <h5 class="card-title" style="width:60%; border:0px solid green">List of {{title}}</h5>
+                    <div class="text-end" style="width:30%;  border:0px solid red">
+                        <a href="/addthread" data-title="Add New Thread" data-bs-remote="false" data-bs-toggle="modal"
+                            data-bs-target="#largeModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                            class="btn btn-primary btn-xs"><i class="fa fa-plus-circle"></i> Add New Thread</a>
+                    </div>
+                </div>
+                <div class="card-body table-responsive">
+                    <h5 class="card-title"></h5>
+
+                    <!-- Table with stripped rows -->
+                    <table class="table table-striped table-hover table-bordered datatable">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Thread Name</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Sort Order</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for thread, post_count in threads %}
+                            <tr>
+                                <td scope="row">{{ loop.index }}</td>
+                                <td>{{ thread.threadname }}</td>                                
+                                <td>
+                                    <span class="badge rounded-pill  
+                                        {% if thread.threadstatus.value == 'Pending' %} 
+                                            bg-warning 
+                                        {% elif thread.threadstatus.value == 'Deleted' %} 
+                                            bg-danger 
+                                        {% else %} 
+                                            bg-success 
+                                        {% endif %}">
+                                        {{ thread.threadstatus.value }}
+                                    </span>
+                                </td>
+                                <td>{{ thread.sortorder }}</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <a class=" dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-gear "></i>
+                                        </a>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+                                            <li>
+                                                <a href="/editthread/{{thread.thread_id}}"
+                                                    data-title="Edit Thread: {{thread.threadname}}" data-bs-remote="false"
+                                                    data-bs-toggle="modal" data-bs-target="#largeModal"
+                                                    class="dropdown-item" data-bs-backdrop="static"
+                                                    data-bs-keyboard="false"><i class="bi bi-pencil-square"></i> Edit
+                                                    Thread</a>
+                                            </li>
+                                            <li class="dropdown-divider"></li>
+                                            <li style="cursor: pointer;">
+                                                <a name="deleter" id="deleter" value="{{thread.thread_id}}"
+                                                    data-swaltext="You want to delete this {{thread.threadname}}  thread record?"
+                                                    data-swalurl="/deletethread/{{thread.thread_id}}"
+                                                    data-swalbtnconfirm="Yes, delete it!"
+                                                    data-swalsuccesstitle="Deleted!"
+                                                    data-swalsuccess="Page was successfully deleted!"
+                                                    data-swalredirect="/threads" data-swalimage=""
+                                                    class="dropdown-item"><i class="bi bi-trash"></i> Delete Thread</a>
+                                            </li>
+                                            <li class="dropdown-divider"></li>
+                                            <li>
+                                                <a href="/addpost/{{thread.thread_id}}"
+                                                    data-title="Add post to {{thread.threadname}} thread"
+                                                    data-bs-remote="false" data-bs-toggle="modal"
+                                                    data-bs-target="#largeModal" class="dropdown-item"
+                                                    data-bs-backdrop="static" data-bs-keyboard="false"><i
+                                                        class="bi bi-plus-circle"></i> Add Post</a>
+                                            </li>
+                                            <li class="dropdown-divider"></li>
+                                            <li>
+                                                <a href="/threadposts/{{thread.thread_id}}"
+                                                    
+                                                    class="dropdown-item" ><i class="bi bi-list"></i> View Post
+                                                    <span class="badge bg-success">{{post_count}}</span>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                    <!-- End Table with stripped rows -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'shared/largemodal.html' %}
+{% endblock %}

@@ -15,3 +15,4 @@ from app.models.PostTagModel import PostTagModel
 
 from app.models.TestimonialModel import TestimonialModel
 from app.models.SliderModel import SliderModel
+from app.models.SettingModel import SettingModel
